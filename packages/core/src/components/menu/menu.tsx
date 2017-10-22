@@ -123,9 +123,6 @@ export class Menu {
       .then(menu => this.menuCtrl = menu);
   }
 
-  /**
-   * @hidden
-   */
   protected ionViewDidLoad() {
     assert(!!this.menuCtrl, 'menucontroller was not initialized');
 
@@ -163,60 +160,26 @@ export class Menu {
     this._init = true;
   }
 
-  hostData() {
-    return {
-      'role': 'navigation',
-      'side': this.getSide(),
-      'type': this.type,
-      class: {
-        'menu-enabled': this._canOpen()
-      }
-    };
+  protected ionViewDidUnload() {
+    this._backdropClick(false);
+
+    this.menuCtrl._unregister(this);
+    this._animation && this._animation.destroy();
+
+    this.menuCtrl = this._animation = this._cntElm = this._backdropEle = null;
   }
 
   getSide(): string {
     return this.isRightSide ? 'right' : 'left';
   }
 
-  protected render() {
-    return ([
-      <div class='menu-inner'>
-        <slot></slot>
-      </div>,
-      <ion-backdrop class='menu-backdrop'></ion-backdrop> ,
-      <ion-gesture {...{
-        'canStart': this.canStart.bind(this),
-        'onWillStart': this._swipeWillStart.bind(this),
-        'onStart': this._swipeStart.bind(this),
-        'onMove': this._swipeProgress.bind(this),
-        'onEnd': this._swipeEnd.bind(this),
-        'maxEdgeStart': this.maxEdgeStart,
-        'edge': this.side,
-        'enabled': this._canOpen() && this.swipeEnabled,
-        'gestureName': 'menu-swipe',
-        'gesturePriority': 10,
-        'type': 'pan',
-        'direction': 'x',
-        'threshold': 10,
-        'attachTo': 'body',
-        'disableScroll': true,
-        'block': this._activeBlock
-      }}></ion-gesture>
-    ]);
-  }
 
-  /**
-   * @hidden
-   */
   onBackdropClick(ev: UIEvent) {
     ev.preventDefault();
     ev.stopPropagation();
     this.close();
   }
 
-  /**
-   * @hidden
-   */
   private prepareAnimation(): Promise<void> {
     const width = this._menuInnerEle.offsetWidth;
     if (width === this._width) {
@@ -565,18 +528,43 @@ export class Menu {
     }
   }
 
-  /**
-   * @hidden
-   */
-  protected ionViewDidUnload() {
-    this._backdropClick(false);
-
-    this.menuCtrl._unregister(this);
-    this._animation && this._animation.destroy();
-
-    this.menuCtrl = this._animation = this._cntElm = this._backdropEle = null;
+  hostData() {
+    return {
+      role: 'navigation',
+      side: this.getSide(),
+      type: this.type,
+      class: {
+        'menu-enabled': this._canOpen()
+      }
+    };
   }
 
+  protected render() {
+    return ([
+      <div class='menu-inner page-inner'>
+        <slot></slot>
+      </div>,
+      <ion-backdrop class='menu-backdrop'></ion-backdrop> ,
+      <ion-gesture {...{
+        'canStart': this.canStart.bind(this),
+        'onWillStart': this._swipeWillStart.bind(this),
+        'onStart': this._swipeStart.bind(this),
+        'onMove': this._swipeProgress.bind(this),
+        'onEnd': this._swipeEnd.bind(this),
+        'maxEdgeStart': this.maxEdgeStart,
+        'edge': this.side,
+        'enabled': this._canOpen() && this.swipeEnabled,
+        'gestureName': 'menu-swipe',
+        'gesturePriority': 10,
+        'type': 'pan',
+        'direction': 'x',
+        'threshold': 10,
+        'attachTo': 'body',
+        'disableScroll': true,
+        'block': this._activeBlock
+      }}></ion-gesture>
+    ]);
+  }
 }
 
 function computeDelta(deltaX: number, isOpen: boolean, isRightSide: boolean): number {

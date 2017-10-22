@@ -70,7 +70,7 @@ ion-buttons div {
 // TODO this is a temp hack to fix segment overlapping ion-nav-item
 ion-buttons,
 .bar-button-menutoggle {
-  z-index: 99;
+  z-index: $z-index-toolbar-buttons;
 
   transform: translateZ(0);
 }

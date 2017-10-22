@@ -263,44 +263,48 @@ ion-page {
 // Page Container Structure
 // --------------------------------------------------
 
-ion-page {
+ion-page,
+.ion-page {
   @include position(0, null, null, 0);
 
   position: absolute;
-  display: block;
 
   width: 100%;
   height: 100%;
 
-  // do not show, but still render so we can get dimensions
-  // opacity: 0;
+  &.hide-page {
+    opacity: 0;
+  }
 }
 
-ion-page.show-page {
-  // show the page now that it's ready
-  // opacity: 1;
-}
+ion-page,
+.ion-page,
+.page-inner {
+  display: flex;
 
+  flex-direction: column;
+  justify-content: space-between;
+}
 
 // Toolbar Container Structure
 // --------------------------------------------------
 
 ion-header {
-  @include position(0, null, null, 0);
-
-  position: absolute;
+  position: relative;
   z-index: $z-index-toolbar;
   display: block;
+
+  order: -1;
 
   width: 100%;
 }
 
 ion-footer {
-  @include position(null, null, 0, 0);
-
-  position: absolute;
+  position: relative;
   z-index: $z-index-toolbar;
   display: block;
+
+  order: 1;
 
   width: 100%;
 }
@@ -312,8 +316,7 @@ ion-footer {
 [app-viewport],
 [overlay-portal],
 [nav-viewport],
-[tab-portal],
-.nav-decor {
+[tab-portal] {
   display: none;
 }
 
